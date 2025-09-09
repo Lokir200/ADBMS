@@ -1,1 +1,120 @@
 # ADBMS
+CREATE TABLE student2(
+    roll_no INT,
+    name VARCHAR(50),
+    address VARCHAR(100),
+    phone varchar(15),
+    age int
+);
+INSERT INTO student2 (roll_no,name,address,phone,age)
+VALUES (1, 'Alok','mangaluru','9482785392',21);
+
+INSERT INTO student2 (roll_no,name,address,phone,age)
+VALUES (2,'Vivek','mysuru','9482785393',22);
+  
+INSERT INTO student2 (roll_no,name,address,phone,age)
+VALUES (3,'Bhuvan','mysuru','9482785394',21);
+
+INSERT INTO student2 (roll_no,name,address,phone,age)
+VALUES (4,'Koushik','bangalore','9482785395',20);
+
+INSERT INTO student2 (roll_no,name,address,phone,age)
+VALUES (5, 'Abhiram','andra','9482785396',22);
+
+INSERT INTO student2 (roll_no,name,address,phone,age)
+VALUES (6, 'shashank','kerala','9482785397',21);
+
+INSERT INTO student2 (roll_no,name,address,phone,age)
+VALUES (7, 'aranya','bangalore','9482785398',21);
+
+INSERT INTO student2 (roll_no,name,address,phone,age)
+VALUES (8, 'chinmayi','gujrat','9482785399',22);
+
+create table course2(crs_id int, roll_no int);
+
+INSERT INTO course2 (crs_id, roll_no)
+VALUES (01, 1 );
+INSERT INTO course2 (crs_id, roll_no)
+VALUES (02, 2 );
+INSERT INTO course2 (crs_id, roll_no)
+VALUES (03, 3 );
+INSERT INTO course2 (crs_id, roll_no)
+VALUES (04, 4 );
+INSERT INTO course2 (crs_id, roll_no)
+VALUES (05, 5 );
+INSERT INTO course2 (crs_id, roll_no)
+VALUES (06, 5 );
+INSERT INTO course2 (crs_id, roll_no)
+VALUES (07, 6 );
+INSERT INTO course2 (crs_id, roll_no)
+VALUES (08, 6 );
+
+#inner join
+select course2.crs_id,student2.name,student2.age from student2 inner join 
+course2 on student2.roll_no=course2.roll_no;
+
+#left join
+select student2.name,course2.crs_id from student2 left join 
+course2 on course2.roll_no = student2.roll_no;
+
+#right join
+select student2.name,course2.crs_id from student2 right join 
+course2 on course2.roll_no = student2.roll_no;
+
+#full join
+select student2.name,course2.crs_id from student2 full join 
+course2 on course2.roll_no = student2.roll_no;
+
+#union
+SELECT roll_no FROM student2
+UNION
+SELECT roll_no FROM course2;
+
+#union all
+SELECT roll_no FROM student2
+UNION ALL
+SELECT roll_no FROM course2;
+
+#intersect
+SELECT roll_no FROM student2
+INTERSECT
+SELECT roll_no FROM course2;
+
+#minus
+SELECT roll_no FROM student2
+minus
+SELECT roll_no FROM course2;
+
+#Exists
+SELECT name FROM student2
+WHERE EXISTS (SELECT 8 FROM course2 WHERE 
+course2.roll_no = student2.roll_no);
+
+#Delete AND exists
+DELETE FROM student2
+WHERE name = 'Koushik'
+AND EXISTS (
+    SELECT 1
+    FROM course2
+    WHERE course2.roll_no = student2.roll_no
+);
+
+#Delete OR exists
+
+DELETE FROM student2
+WHERE name = 'Bhuvan'
+OR EXISTS (
+    SELECT 3
+    FROM course2
+    WHERE course2.roll_no = student2.roll_no
+);
+
+#Update Exists
+Update FROM student2
+WHERE name = 'Bhuvan'
+OR EXISTS (
+    SELECT 1
+    FROM course2
+    WHERE course2.roll_no = student2.roll_no
+);
+
