@@ -1,0 +1,168 @@
+create table emp(id int,sal int,name varchar(30));
+insert into emp(id,sal,name)
+values(1,50000,'smith');
+values(2,94000,'bill');
+values(3,70550,'sam');
+values(4,80000,'warden');
+values(5,60000,'erik');
+values(6,69000,'kate');
+
+with temp(avgval)as
+(select avg(sal)
+from emp)
+select id,name,sal from emp,temp
+where emp.sal>temp.avgval;
+
+###
+create table parof(parent varchar(30),name varchar(30));
+insert into parof(parent,name)
+values('alice','carol');
+values('bob','carol');
+values('carol','dave');
+values('carol','george');
+values('dave','mary');
+values('eve','mary');
+values('mary','frank');
+
+PARENT                         NAME
+------------------------------ ------------------------------
+alice                          carol
+bob                            carol
+carol                          dave
+carol                          george
+dave                           mary
+eve                            mary
+mary                           frank
+
+7 rows selected.
+
+#(X)next one
+with ancestor as(select parent as p from parof where
+name='frank'
+union all
+select parof.parent from ancestor,parof
+where ancestor.p=parof.name)
+select*from ancestor;
+
+#ai(working)
+WITH ancestor(parent) AS (
+    SELECT parent
+    FROM parof
+    WHERE name = 'frank'
+    UNION ALL
+    SELECT parof.parent
+    FROM ancestor, parof
+    WHERE ancestor.parent = parof.name
+)
+SELECT * FROM ancestor;
+PARENT
+------------------------------
+mary
+dave
+eve
+carol
+alice
+bob
+
+6 rows selected.
+
+
+##countup
+with countup(n) as(select 1 from dual
+union all
+select n+1 from countup where n<3)
+select*from countup where n<3;
+.....................................
+#PL/SQL
+
+set serveroutput om;
+declare 
+v1 integer;
+v1 real;
+v3 varchar(30);
+begin
+null;
+end;
+ /
+
+PL/SQL procedure successfully completed.
+
+#####
+declare 
+v varchar2(40):=' bejar nange adike hakthidini';
+begin
+dbms_output.put_line(v);
+end;
+/
+
+O/P
+
+bejar nange adike hakthidini
+PL/SQL procedure successfully completed.
+
+####
+declare
+a integer:=10;
+b integer:=20;
+c integer;
+f real;
+begin
+dbms_output.put_line('vale of c'||c);
+f:=70.0/3.0;
+dbms_output.put_line('value of f'||f);
+end;
+/
+
+##if else
+DECLARE
+num1 NUMBER := 25;
+num2 NUMBER := 40;
+num3 NUMBER := 15;
+largest NUMBER;
+BEGIN
+DBMS_OUTPUT.PUT_LINE('First number : '|| num1);
+DBMS_OUTPUT.PUT_LINE('Second number : '|| num2);
+DBMS_OUTPUT.PUT_LINE('Third number : '|| num3);
+IF num1 > num2 THEN
+IF num1 > num3 THEN
+largest := num1;
+ELSE
+largest := num3;
+END IF;
+ELSE
+IF num2 > num3 THEN
+largest := num2;
+ELSE
+largest := num3;
+END IF;
+END IF;
+DBMS_OUTPUT.PUT_LINE('The largest number is: ' || largest);
+END;
+/
+
+#leap year
+DECLARE
+year NUMBER := 2024; 
+BEGIN
+IF (MOD(year,4) = 0 AND MOD(year,100) != 0) OR (MOD(year,400) = 0) THEN
+DBMS_OUTPUT.PUT_LINE(year || ' is a Leap Year');
+ELSE
+DBMS_OUTPUT.PUT_LINE(year ||' is NOT a Leap Year');
+END IF;
+END;
+/
+
+3. Program to check whether the input entered is char , int ,spl
+
+DECLARE
+ch CHAR(1) := '&ch'; 
+BEGIN
+IF ch BETWEEN '0' AND '9' THEN
+DBMS_OUTPUT.PUT_LINE('It is an Integer');
+ELSIF (ch BETWEEN 'A' AND 'Z') OR (ch BETWEEN 'a' AND 'z') THEN
+DBMS_OUTPUT.PUT_LINE('It is a Character');
+ELSE
+DBMS_OUTPUT.PUT_LINE('It is a Special Symbol');
+END IF;
+END;
+/
