@@ -1,0 +1,307 @@
+-- Enable output in SQL*Plus/SQL Developer
+SET SERVEROUTPUT ON;
+
+-- After compiling the package below, run examples like:
+BEGIN
+  practice_pkg.leap_year(2000);
+  practice_pkg.ops_demo(12, 5);
+  practice_pkg.classify_input('A');
+  practice_pkg.max_two(10, 20);
+  practice_pkg.max_three_simple(7, 14, 3);
+  practice_pkg.max_three_nested(9, 2, 9);
+  practice_pkg.odd_even(27);
+  practice_pkg.grade_student(86);
+  practice_pkg.voting_eligibility(17);
+  practice_pkg.for_loop_example(5);
+  practice_pkg.sum_n_numbers(10);
+  practice_pkg.multiplication_table(9, 2, 10); -- user-chosen table and range
+  practice_pkg.sum_even_odd(10);
+  practice_pkg.is_prime(37);
+  practice_pkg.fibonacci_series(10);
+  practice_pkg.factorial(6);
+  practice_pkg.reverse_number(12340);
+END;
+/
+
+
+CREATE OR REPLACE PACKAGE practice_pkg IS
+  -- Conditionals
+  PROCEDURE leap_year(p_year IN PLS_INTEGER);
+  PROCEDURE ops_demo(p_a IN NUMBER, p_b IN NUMBER);
+  PROCEDURE classify_input(p_text IN VARCHAR2);
+  PROCEDURE max_two(p_a IN NUMBER, p_b IN NUMBER);
+  PROCEDURE max_three_simple(p_a IN NUMBER, p_b IN NUMBER, p_c IN NUMBER);
+  PROCEDURE max_three_nested(p_a IN NUMBER, p_b IN NUMBER, p_c IN NUMBER);
+  PROCEDURE odd_even(p_n IN PLS_INTEGER);
+  PROCEDURE grade_student(p_marks IN NUMBER);
+  PROCEDURE voting_eligibility(p_age IN PLS_INTEGER);
+
+  -- Looping
+  PROCEDURE for_loop_example(p_n IN PLS_INTEGER);
+  PROCEDURE sum_n_numbers(p_n IN PLS_INTEGER);
+  PROCEDURE multiplication_table(p_table IN PLS_INTEGER, p_start IN PLS_INTEGER, p_end IN PLS_INTEGER);
+  PROCEDURE sum_even_odd(p_n IN PLS_INTEGER);
+  PROCEDURE is_prime(p_n IN PLS_INTEGER);
+  PROCEDURE fibonacci_series(p_terms IN PLS_INTEGER);
+  PROCEDURE factorial(p_n IN PLS_INTEGER);
+  PROCEDURE reverse_number(p_n IN PLS_INTEGER);
+END practice_pkg;
+/
+
+CREATE OR REPLACE PACKAGE BODY practice_pkg IS
+
+  -- 1) Leap year
+  PROCEDURE leap_year(p_year IN PLS_INTEGER) IS
+    v_is_leap BOOLEAN;
+  BEGIN
+    v_is_leap := (MOD(p_year, 400) = 0) OR (MOD(p_year, 4) = 0 AND MOD(p_year, 100) <> 0);
+    IF v_is_leap THEN
+      DBMS_OUTPUT.PUT_LINE(p_year || ' is a leap year');
+    ELSE
+      DBMS_OUTPUT.PUT_LINE(p_year || ' is not a leap year');
+    END IF;
+  END;
+
+  -- 2) Arithmetic, logical, relational operations
+  PROCEDURE ops_demo(p_a IN NUMBER, p_b IN NUMBER) IS
+    v_sum NUMBER := p_a + p_b;
+    v_diff NUMBER := p_a - p_b;
+    v_prod NUMBER := p_a * p_b;
+    v_quot NUMBER;
+  BEGIN
+    IF p_b = 0 THEN
+      v_quot := NULL;
+    ELSE
+      v_quot := p_a / p_b;
+    END IF;
+
+    DBMS_OUTPUT.PUT_LINE('Sum: ' || v_sum);
+    DBMS_OUTPUT.PUT_LINE('Diff: ' || v_diff);
+    DBMS_OUTPUT.PUT_LINE('Prod: ' || v_prod);
+    DBMS_OUTPUT.PUT_LINE('Quot: ' || COALESCE(TO_CHAR(v_quot), 'undefined (division by zero)'));
+
+    -- Relational
+    DBMS_OUTPUT.PUT_LINE('a = b? ' || CASE WHEN p_a = p_b THEN 'TRUE' ELSE 'FALSE' END);
+    DBMS_OUTPUT.PUT_LINE('a > b? ' || CASE WHEN p_a > p_b THEN 'TRUE' ELSE 'FALSE' END);
+    DBMS_OUTPUT.PUT_LINE('a < b? ' || CASE WHEN p_a < p_b THEN 'TRUE' ELSE 'FALSE' END);
+
+    -- Logical
+    DBMS_OUTPUT.PUT_LINE('(a>0) AND (b>0)? ' || CASE WHEN (p_a > 0) AND (p_b > 0) THEN 'TRUE' ELSE 'FALSE' END);
+    DBMS_OUTPUT.PUT_LINE('(a>0) OR (b>0)?  ' || CASE WHEN (p_a > 0) OR  (p_b > 0) THEN 'TRUE' ELSE 'FALSE' END);
+    DBMS_OUTPUT.PUT_LINE('NOT(a>0)?        ' || CASE WHEN NOT (p_a > 0) THEN 'TRUE' ELSE 'FALSE' END);
+  END;
+
+  -- 3) Classify input: char, number, special
+  PROCEDURE classify_input(p_text IN VARCHAR2) IS
+    ch CHAR(1) := SUBSTR(p_text, 1, 1);
+  BEGIN
+    IF REGEXP_LIKE(ch, '^[[:alpha:]]$') THEN
+      DBMS_OUTPUT.PUT_LINE('Character');
+    ELSIF REGEXP_LIKE(ch, '^[[:digit:]]$') THEN
+      DBMS_OUTPUT.PUT_LINE('Number');
+    ELSE
+      DBMS_OUTPUT.PUT_LINE('Special character');
+    END IF;
+  END;
+
+  -- 4) Largest of two numbers
+  PROCEDURE max_two(p_a IN NUMBER, p_b IN NUMBER) IS
+  BEGIN
+    IF p_a > p_b THEN
+      DBMS_OUTPUT.PUT_LINE('Max: ' || p_a);
+    ELSIF p_b > p_a THEN
+      DBMS_OUTPUT.PUT_LINE('Max: ' || p_b);
+    ELSE
+      DBMS_OUTPUT.PUT_LINE('Both equal: ' || p_a);
+    END IF;
+  END;
+
+  -- 5) Largest of 3 numbers (simple if)
+  PROCEDURE max_three_simple(p_a IN NUMBER, p_b IN NUMBER, p_c IN NUMBER) IS
+    v_max NUMBER := p_a;
+  BEGIN
+    IF p_b > v_max THEN v_max := p_b; END IF;
+    IF p_c > v_max THEN v_max := p_c; END IF;
+    DBMS_OUTPUT.PUT_LINE('Max: ' || v_max);
+  END;
+
+  -- 5b) Largest of 3 numbers (nested if)
+  PROCEDURE max_three_nested(p_a IN NUMBER, p_b IN NUMBER, p_c IN NUMBER) IS
+  BEGIN
+    IF p_a >= p_b THEN
+      IF p_a >= p_c THEN
+        DBMS_OUTPUT.PUT_LINE('Max: ' || p_a);
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('Max: ' || p_c);
+      END IF;
+    ELSE
+      IF p_b >= p_c THEN
+        DBMS_OUTPUT.PUT_LINE('Max: ' || p_b);
+      ELSE
+        DBMS_OUTPUT.PUT_LINE('Max: ' || p_c);
+      END IF;
+    END IF;
+  END;
+
+  -- 6) Odd or even
+  PROCEDURE odd_even(p_n IN PLS_INTEGER) IS
+  BEGIN
+    IF MOD(p_n, 2) = 0 THEN
+      DBMS_OUTPUT.PUT_LINE(p_n || ' is even');
+    ELSE
+      DBMS_OUTPUT.PUT_LINE(p_n || ' is odd');
+    END IF;
+  END;
+
+  -- 7) Grade of a student (nested if-else)
+  PROCEDURE grade_student(p_marks IN NUMBER) IS
+    v_grade VARCHAR2(2);
+  BEGIN
+    IF p_marks >= 90 THEN
+      v_grade := 'A';
+    ELSIF p_marks >= 80 THEN
+      v_grade := 'B';
+    ELSIF p_marks >= 70 THEN
+      v_grade := 'C';
+    ELSIF p_marks >= 60 THEN
+      v_grade := 'D';
+    ELSE
+      v_grade := 'F';
+    END IF;
+    DBMS_OUTPUT.PUT_LINE('Grade: ' || v_grade);
+  END;
+
+  -- 8) Voting eligibility
+  PROCEDURE voting_eligibility(p_age IN PLS_INTEGER) IS
+  BEGIN
+    IF p_age >= 18 THEN
+      DBMS_OUTPUT.PUT_LINE('Eligible to vote');
+    ELSE
+      DBMS_OUTPUT.PUT_LINE('Not eligible to vote');
+    END IF;
+  END;
+
+  -- Looping ----------------------------
+
+  -- for loop demo
+  PROCEDURE for_loop_example(p_n IN PLS_INTEGER) IS
+  BEGIN
+    FOR i IN 1 .. p_n LOOP
+      DBMS_OUTPUT.PUT_LINE('i = ' || i);
+    END LOOP;
+  END;
+
+  -- Sum of n numbers
+  PROCEDURE sum_n_numbers(p_n IN PLS_INTEGER) IS
+    v_sum PLS_INTEGER := 0;
+  BEGIN
+    FOR i IN 1 .. p_n LOOP
+      v_sum := v_sum + i;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Sum(1..' || p_n || ') = ' || v_sum);
+  END;
+
+  -- Multiplication table with chosen table and range
+  PROCEDURE multiplication_table(p_table IN PLS_INTEGER, p_start IN PLS_INTEGER, p_end IN PLS_INTEGER) IS
+    v_lo PLS_INTEGER := LEAST(p_start, p_end);
+    v_hi PLS_INTEGER := GREATEST(p_start, p_end);
+  BEGIN
+    FOR i IN v_lo .. v_hi LOOP
+      DBMS_OUTPUT.PUT_LINE(p_table || ' x ' || i || ' = ' || (p_table * i));
+    END LOOP;
+  END;
+
+  -- Sum of even and odd up to n
+  PROCEDURE sum_even_odd(p_n IN PLS_INTEGER) IS
+    v_even PLS_INTEGER := 0;
+    v_odd  PLS_INTEGER := 0;
+  BEGIN
+    FOR i IN 1 .. p_n LOOP
+      IF MOD(i, 2) = 0 THEN
+        v_even := v_even + i;
+      ELSE
+        v_odd  := v_odd + i;
+      END IF;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Sum of evens: ' || v_even);
+    DBMS_OUTPUT.PUT_LINE('Sum of odds : ' || v_odd);
+  END;
+
+  -- Prime check
+  PROCEDURE is_prime(p_n IN PLS_INTEGER) IS
+    v_is_prime BOOLEAN := TRUE;
+  BEGIN
+    IF p_n <= 1 THEN
+      v_is_prime := FALSE;
+    ELSE
+      FOR d IN 2 .. TRUNC(SQRT(p_n)) LOOP
+        IF MOD(p_n, d) = 0 THEN
+          v_is_prime := FALSE;
+          EXIT;
+        END IF;
+      END LOOP;
+    END IF;
+
+    IF v_is_prime THEN
+      DBMS_OUTPUT.PUT_LINE(p_n || ' is prime');
+    ELSE
+      DBMS_OUTPUT.PUT_LINE(p_n || ' is not prime');
+    END IF;
+  END;
+
+  -- Fibonacci series (first p_terms)
+  PROCEDURE fibonacci_series(p_terms IN PLS_INTEGER) IS
+    a NUMBER := 0;
+    b NUMBER := 1;
+  BEGIN
+    IF p_terms <= 0 THEN
+      DBMS_OUTPUT.PUT_LINE('No terms to display');
+    ELSIF p_terms = 1 THEN
+      DBMS_OUTPUT.PUT_LINE(a);
+    ELSE
+      DBMS_OUTPUT.PUT(a || ' ');
+      DBMS_OUTPUT.PUT_LINE(b);
+      FOR i IN 3 .. p_terms LOOP
+        DECLARE c NUMBER := a + b; BEGIN
+          DBMS_OUTPUT.PUT_LINE(c);
+          a := b; b := c;
+        END;
+      END LOOP;
+    END IF;
+  END;
+
+  -- Factorial
+  PROCEDURE factorial(p_n IN PLS_INTEGER) IS
+    v_fact NUMBER := 1;
+  BEGIN
+    IF p_n < 0 THEN
+      DBMS_OUTPUT.PUT_LINE('Factorial undefined for negative numbers');
+      RETURN;
+    END IF;
+
+    IF p_n = 0 THEN
+      DBMS_OUTPUT.PUT_LINE('0! = 1');
+      RETURN;
+    END IF;
+
+    FOR i IN 1 .. p_n LOOP
+      v_fact := v_fact * i;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE(p_n || '! = ' || v_fact);
+  END;
+
+  -- Reverse digits of a number
+  PROCEDURE reverse_number(p_n IN PLS_INTEGER) IS
+    v_x      PLS_INTEGER := ABS(p_n);
+    v_rev    PLS_INTEGER := 0;
+    v_sign   PLS_INTEGER := CASE WHEN p_n < 0 THEN -1 ELSE 1 END;
+  BEGIN
+    WHILE v_x > 0 LOOP
+      v_rev := v_rev * 10 + MOD(v_x, 10);
+      v_x   := v_x / 10;
+    END LOOP;
+    DBMS_OUTPUT.PUT_LINE('Reverse: ' || (v_sign * v_rev));
+  END;
+
+END practice_pkg;
+/
