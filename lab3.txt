@@ -7,13 +7,14 @@ values(4,80000,'warden');
 values(5,60000,'erik');
 values(6,69000,'kate');
 
+--avg salary
 with temp(avgval)as
 (select avg(sal)
 from emp)
 select id,name,sal from emp,temp
 where emp.sal>temp.avgval;
 
-###
+---parent & child
 create table parof(parent varchar(30),name varchar(30));
 insert into parof(parent,name)
 values('alice','carol');
@@ -36,15 +37,7 @@ mary                           frank
 
 7 rows selected.
 
-#(X)next one
-with ancestor as(select parent as p from parof where
-name='frank'
-union all
-select parof.parent from ancestor,parof
-where ancestor.p=parof.name)
-select*from ancestor;
-
-#ai(working)
+---parent of a child query
 WITH ancestor(parent) AS (
     SELECT parent
     FROM parof
@@ -67,15 +60,20 @@ bob
 6 rows selected.
 
 
-##countup
-with countup(n) as(select 1 from dual
-union all
-select n+1 from countup where n<3)
-select*from countup where n<3;
+---countup(dual is oracle based dummy table)
+WITH countup (n) AS (
+  SELECT 1 FROM dual
+  UNION ALL
+  SELECT n + 1 FROM countup
+  WHERE  n + 1 < 3
+)
+SELECT n
+FROM   countup;
 .....................................
-#PL/SQL
+#PL/SQL  1
+         2
 
-set serveroutput om;
+set serveroutput on;
 declare 
 v1 integer;
 v1 real;
@@ -87,9 +85,9 @@ end;
 
 PL/SQL procedure successfully completed.
 
-#####
+---print 
 declare 
-v varchar2(40):=' bejar nange adike hakthidini';
+v varchar2(40):='welcome to plsql';
 begin
 dbms_output.put_line(v);
 end;
@@ -97,23 +95,24 @@ end;
 
 O/P
 
-bejar nange adike hakthidini
+welcome to plsql
 PL/SQL procedure successfully completed.
 
-####
+---print value of an operation
 declare
 a integer:=10;
 b integer:=20;
 c integer;
 f real;
 begin
+c := a + b;
 dbms_output.put_line('vale of c'||c);
 f:=70.0/3.0;
 dbms_output.put_line('value of f'||f);
 end;
 /
 
-##if else
+1.if else
 DECLARE
 num1 NUMBER := 25;
 num2 NUMBER := 40;
@@ -140,7 +139,7 @@ DBMS_OUTPUT.PUT_LINE('The largest number is: ' || largest);
 END;
 /
 
-#leap year
+2.leap year
 DECLARE
 year NUMBER := 2024; 
 BEGIN
@@ -165,4 +164,5 @@ ELSE
 DBMS_OUTPUT.PUT_LINE('It is a Special Symbol');
 END IF;
 END;
+
 /
