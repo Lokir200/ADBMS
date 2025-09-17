@@ -1,0 +1,189 @@
+SQL*Plus: Release 21.0.0.0.0 - Production on Wed Sep 17 21:57:48 2025
+Version 21.3.0.0.0
+
+Copyright (c) 1982, 2021, Oracle.  All rights reserved.
+
+Enter user-name: system
+Enter password:
+Last Successful login time: Wed Sep 17 2025 21:30:02 +05:30
+
+Connected to:
+Oracle Database 21c Express Edition Release 21.0.0.0.0 - Production
+Version 21.3.0.0.0
+
+SQL> CREATE TABLE StudentDetails (
+  2      S_ID INT PRIMARY KEY,
+  3      Name VARCHAR(50),
+  4      Address VARCHAR(100)
+  5  );
+CREATE TABLE StudentDetails (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL>
+SQL> CREATE TABLE StudentMarks (
+  2      ID INT PRIMARY KEY,
+  3      Name VARCHAR(50),
+  4      Marks INT,
+  5      Age INT
+  6  );
+CREATE TABLE StudentMarks (
+             *
+ERROR at line 1:
+ORA-00955: name is already used by an existing object
+
+
+SQL> INSERT INTO StudentDetails (S_ID, Name, Address) VALUES
+  2  (1, 'Alice', '123 Park Lane');
+
+1 row created.
+
+SQL> INSERT INTO StudentDetails (S_ID, Name, Address) VALUES
+  2  (2, 'Bob', '456 Maple Street');
+
+1 row created.
+
+SQL> INSERT INTO StudentDetails (S_ID, Name, Address) VALUES
+  2  (3, 'Charlie', '789 Oak Avenue');
+
+1 row created.
+
+SQL> INSERT INTO StudentDetails (S_ID, Name, Address) VALUES
+  2  (4, 'Diana', '101 Pine Road');
+
+1 row created.
+
+SQL> INSERT INTO StudentDetails (S_ID, Name, Address) VALUES
+  2  (5, 'Evan', '202 Birch Boulevard');
+
+1 row created.
+
+SQL> INSERT INTO StudentMarks (ID, Name, Marks, Age) VALUES
+  2  (1, 'Alice', 85, 20);
+
+1 row created.
+
+SQL> INSERT INTO StudentMarks (ID, Name, Marks, Age) VALUES
+  2  (2, 'Bob', 90, 21);
+
+1 row created.
+
+SQL> INSERT INTO StudentMarks (ID, Name, Marks, Age) VALUES
+  2  (3, 'Charlie', 78, 19);
+
+1 row created.
+
+SQL> INSERT INTO StudentMarks (ID, Name, Marks, Age) VALUES
+  2  (4, 'Diana', 88, 20);
+
+1 row created.
+
+SQL> INSERT INTO StudentMarks (ID, Name, Marks, Age) VALUES
+  2  (5, 'Evan', 92, 22);
+
+1 row created.
+
+SQL> CREATE VIEW DetailsView AS
+  2  SELECT Name, Address FROM StudentDetails
+  3  WHERE S_ID < 5;
+
+View created.
+
+SQL> SELECT * FROM DetailsView;
+
+NAME
+--------------------------------------------------
+ADDRESS
+--------------------------------------------------------------------------------
+Alice
+123 Park Lane
+
+Bob
+456 Maple Street
+
+Charlie
+789 Oak Avenue
+
+
+NAME
+--------------------------------------------------
+ADDRESS
+--------------------------------------------------------------------------------
+Diana
+101 Pine Road
+
+
+SQL> CREATE VIEW MarksView AS
+  2  SELECT StudentDetails.Name, StudentDetails.Address, StudentMarks.Marks
+  3  FROM StudentDetails, StudentMarks
+  4  WHERE StudentDetails.Name = StudentMarks.Name;
+
+View created.
+
+SQL> SELECT * FROM MarksView;
+
+NAME
+--------------------------------------------------
+ADDRESS
+--------------------------------------------------------------------------------
+     MARKS
+----------
+Alice
+123 Park Lane
+        85
+
+Bob
+456 Maple Street
+        90
+
+NAME
+--------------------------------------------------
+ADDRESS
+--------------------------------------------------------------------------------
+     MARKS
+----------
+
+Charlie
+789 Oak Avenue
+        78
+
+Diana
+101 Pine Road
+
+NAME
+--------------------------------------------------
+ADDRESS
+--------------------------------------------------------------------------------
+     MARKS
+----------
+        88
+
+Evan
+202 Birch Boulevard
+        92
+
+
+SQL> INSERT INTO StudentDetails (S_ID, Name, Address)
+  2  VALUES (6, 'Frank', '303 Cedar Street');
+
+1 row created.
+
+SQL> UPDATE DetailsView
+  2  SET Address = '404 Elm Street'
+  3  WHERE Name = 'Alice';
+
+1 row updated.
+
+SQL> DELETE FROM DetailsView
+  2  WHERE Name = 'Bob';
+
+1 row deleted.
+
+
+SQL> DROP VIEW MarksView;
+
+View dropped.
+
+SQL>
